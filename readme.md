@@ -6,7 +6,7 @@ This is an attempt to explore rust and rust tooling by scaffolding a rust backen
 
 ### Web server
 - [x] Hello world with Rocket
-- [] Demonstrate request and response bodies with Rocket
+- [x] Demonstrate request and response bodies with Rocket
 - [] Testing controllers / Rocket Apps
 
 ### Graphql

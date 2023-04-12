@@ -1,6 +1,11 @@
 use rocket::get;
 use rocket::launch;
+use rocket::post;
 use rocket::routes;
+use rocket::serde::{
+    Deserialize, 
+    json::Json, Serialize
+};
 
 /*
 * For imports, rocket examples use
@@ -34,11 +39,44 @@ fn hello(name: String, age: u8) -> String {
     format!("Hello, {} year old named {}!", age, name)
 }
 
+/*
+* POST with JSON body
+https://rocket.rs/v0.5-rc/guide/requests/#json
+ */
+#[derive(Deserialize)]
+#[serde(crate = "rocket::serde")]
+struct Task<'r> {
+    description: &'r str,
+    complete: bool
+}
+
+#[post("/todo", data = "<task>")]
+fn new(task: Json<Task<'_>>) { 
+    format!("You posted a task with: {}, {}", task.description, task.complete);
+}
+
+/*
+https://rocket.rs/v0.5-rc/guide/responses/#responder
+https://rocket.rs/v0.4/guide/responses/#json
+ */
+#[derive(Serialize)]
+struct Person {
+    name: &'static str,
+    title: &'static str,
+}
+
+#[get("/")]
+fn json() -> Json<Person> {
+    Json(Person {name: "John", title: "Captain" })
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
         .mount("/hello", routes![hello])
+        .mount("/tasks", routes![new])
+        .mount("/json", routes![json])
 }
 
 /*
